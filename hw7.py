@@ -34,6 +34,44 @@ class Node:
         
         sponsor.parent.reCalculate(p,g)
     
+    def delete(self,p,g,user,a):
+        #find user to delete
+        delUser = self.findUser(user)
+
+        #goto parent 
+        parent = delUser.parent
+
+        #check if lef or right is to be delted
+        if parent.left.ID is user:
+            newNode = parent.right
+        else:
+            newNode = parent.left
+        
+        #delete user
+        delUser = None
+        
+        if newNode.left is None and newNode.right is None:
+            #replace parent info wit newNode and delete it
+            
+            parent.ID = newNode.ID
+            parent.data = a
+            parent.left = None
+            parent.right = None
+            newNode = None
+
+        else:
+            #replace k below with k ontop
+            temp = parent.parent 
+            parent = newNode
+            parent.parent = temp
+            parent.parent.left = parent
+            newNode = None
+            
+        
+        #recalculate nodes
+        parent.parent.reCalculate(p,g)
+        
+        # print("k2", parent.parent.Data)            
     def reCalculate(self,p,g):
         if self is not None:
             #retrive data of left and right
@@ -46,7 +84,16 @@ class Node:
             self.data = K
             if self.parent is not None:
                 self.parent.reCalculate(p,g)
-            
+    
+    def query(self, keyID):
+        if self.left:
+            self.left.query(keyID)
+        if self:
+            if self.ID is keyID:
+                print(self.data)
+        if self.right:
+            self.right.query(keyID)
+        
         
          
     def findUser(self, ID):
@@ -94,8 +141,26 @@ def init(p,g, user1, a ,user2,b , key):
     return root
 
 root = init(29,3,"Alice",7, "Bob", 5, "K0")
+root.query("K0")
 root.add(29,3,"Alice",3,"Carol",13,"K1")
+root.query("K0")
+root.query("K1")
 root.add(29,3,"Carol",6,"David",20,"K2")
+root.query("K0")
+root.query("K1")
+root.query("K2")
 root.add(29,3,"Carol",2,"Earl",17,"K3")
-print("root",root.ID)
-root.printTree()
+root.query("K0")
+root.query("K1")
+root.query("K2")
+root.query("K3")
+root.delete(29,3,"Carol",21)
+root.query("K0")
+root.query("K1")
+root.query("K2")
+root.delete(29,3,"Alice",23)
+root.query("K0")
+root.query("K2")
+
+# print("root",root.ID)
+# root.printTree()
